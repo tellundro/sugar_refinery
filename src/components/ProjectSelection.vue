@@ -17,7 +17,7 @@
 
     <!-- Project history -->
     <div class="flex flex-col items-start h-36 w-2/3 border-zinc-600 justify-start rounded-lg">
-      <div class="text-lg pb-4">Existing projects:</div>
+      <div class="text-lg w-full text-zinc-500 bg-zinc-900 rounded p-4 pt-2 pb-2 mb-2 align-middle">Existing projects</div>
       <div :id="project.name" v-for="project in lastProjects" :key="project.name" 
         class="group relative w-full text-lg flex">
         <div @click="loadState(project.fullPath)" class="cursor-pointer w-4/5 rounded group-hover:bg-zinc-400 group-hover:text-zinc-800 p-2">
