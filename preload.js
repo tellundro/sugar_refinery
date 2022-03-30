@@ -21,8 +21,8 @@ contextBridge.exposeInMainWorld(
   getFileNameFromPath: (fullPath) => ipcRenderer.invoke('getFileNameFromPath', fullPath),
   getLastProjects: () => ipcRenderer.invoke('getLastProjects'),
   getSavedState: (fullPath) => ipcRenderer.invoke('getSavedState', fullPath),
+  deleteProject: (name) => ipcRenderer.invoke('deleteProject', name),
   closeWithoutSave: () => ipcRenderer.send('closeWithoutSave'),
   generatePreview: (state) => ipcRenderer.invoke('generatePreview', state),
-
 },
 );

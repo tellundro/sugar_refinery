@@ -219,6 +219,49 @@ function generatePreview(event, state) {
   return generateSingleImage(JSON.parse(state));
 }
 
+function showConfirmDialog() {
+  var choice = dialog.showMessageBoxSync(
+    {
+      type: 'question',
+      buttons: ['Yes', 'No'],
+      title: 'Confirm',
+      message: 'Are you sure you want to delete the project?'
+    });
+
+  console.log(choice)
+  return choice === 0;
+}
+
+function deleteSavedState(fullPath) {
+  try {
+    fs.unlinkSync(fullPath)
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+async function deleteProject(event, name) {
+  console.log("name is " + name)
+  let confirmed = showConfirmDialog()
+  if (confirmed) {
+    let lastProjects = getLastProjects()
+    if (lastProjects) {
+      let index = lastProjects.findIndex(project => project.name === JSON.parse(name))
+      console.log(lastProjects)
+      console.log(index)
+      console.log("lastProject[0].name: " + lastProjects[0].name + " name: " + JSON.parse(name))
+      // console.log(lastProjects[index].fullPath)
+      deleteSavedState(lastProjects[index].fullPath)
+      lastProjects.splice(index, 1)
+      // remove savedState
+      writeLastProjects(lastProjects)
+      return true;
+    }
+    return false;
+  }
+  return false;
+}
+
 // -------------------------------------------------------------
 // SIGNALS CODE
 // -------------------------------------------------------------
@@ -240,6 +283,8 @@ ipcMain.on('save-to-txt-and-return', (event, data) => {
   // update lastest opened projects on localStorage
   app.emit('ProjectSelection')
 })
+
+ipcMain.handle('deleteProject', deleteProject)
 
 ipcMain.handle('generatePreview', generatePreview)
 
