@@ -58,6 +58,16 @@
         class="p-2 w-96 focus:outline-none focus:bg-zinc-400 focus:text-zinc-800 hover:placeholder:text-zinc-700 placeholder:text-zinc-700 focus:placeholder:text-zinc-700 hover:text-zinc-800 hover:bg-zinc-400 border border-zinc-400 rounded bg-inherit text-inherit" />
     </div>
 
+    <div class="p-2  flex justify-start border-b-zinc-400 gap-4 ">
+      <p class="w-52 p-2 align-middle text-left">Blockchain:</p>
+      <select class="custom-select w-96 appearance-none bg-zinc-900 opacity-70 text-zinc-400 p-1 relative" v-model="store.metadata.blockchain">
+        <option value="etherium">Etherium</option>
+        <option value="solana">Solana</option>
+      </select>
+    </div>
+
+
+
   </div>
 
 </template>

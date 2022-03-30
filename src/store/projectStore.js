@@ -11,6 +11,7 @@ let originalState = {
     author: "",
     description: "",
     externalUrl: "",
+    blockchain: "",
   },
   layerCounter: 0,
   layers: [
