@@ -1,0 +1,215 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+    min-height: 100vh;
+    min-width: 100vw;
+}
+
+body {
+    width: 100vw;
+    min-height: 100vh;
+    min-width: 1000px;
+    @apply bg-zinc-800;
+    margin: 0;
+}
+
+#app {
+    min-width: 800px;
+    @apply min-h-screen;
+}
+
+* {
+    @apply font-sans;
+    @apply text-zinc-400;
+    @apply border-zinc-400;
+    @apply rounded-lg;
+
+}
+
+.router-link-active {
+  @apply bg-zinc-800;
+
+}
+/* Disable pointer events to all children of categoryDivs */
+/* .categoryDivs * { */
+/*   pointer-events: none; */
+/* } */
+
+.hide {
+  transition: 0.01s;
+  transform: translateX(-9999px);
+  @apply opacity-30;
+}
+
+.hide:hover {
+  @apply bg-zinc-600;
+}
+
+.dragOverTop::before {
+  content: '';
+  position: absolute;
+  @apply w-full;
+  top: -5px;
+  left: 0;
+  height: 3px;
+  @apply bg-lime-600;
+}
+
+.dragOverDown::before {
+  content: '';
+  position: absolute;
+  @apply w-full;
+  bottom: -5px;
+  left: 0;
+  height: 3px;
+  @apply bg-lime-600;
+}
+  
+.min-h-10 {
+  min-height: 10px;
+}
+
+.min-w-1000px {
+    min-width: 1000px;
+}
+
+.min-w-900px {
+    min-width: 900px;
+}
+
+.min-w-800px {
+    min-width: 800px;
+}
+
+
+.w-120 {
+  width: 30rem;
+}
+
+.w-140 {
+  width: 35rem;
+}
+
+.w-160 {
+  width: 40rem;
+}
+
+.w-832px {
+  width: 52rem;
+}
+
+.min-h-20 {
+  min-height: 5rem;
+}
+
+.min-h-40 {
+  min-height: 10rem;
+}
+
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  @apply bg-zinc-800;
+  /* background: #f1f1f1; */
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  @apply bg-zinc-600;
+  /* background: #888; */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-zinc-400;
+  /* background: #555; */
+}
+
+
+/* input range */
+/* The slider itself */
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 100%; /* Full-width */
+  height: 15px; /* Specified height */
+  @apply bg-zinc-900;
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+ -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  border-radius: 50%;
+  width: 15px; /* Set a specific slider handle width */
+  height: 15px; /* Slider handle height */
+  @apply bg-zinc-400;
+  cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+  width: 15px; /* Set a specific slider handle width */
+  height: 15px; /* Slider handle height */
+  border-radius: 50%;
+  @apply bg-zinc-400;
+  cursor: pointer; /* Cursor on hover */
+}
+
+.arrow {
+  bottom: -6px;
+  width: 10px;
+  height: 10px;
+  border: solid;
+  border-radius: 0;
+  border-width: 0 1px 1px 0;
+  @apply bg-zinc-800;
+  @apply border-zinc-400;
+}
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+
+/* /* select arrow */
+/* .custom-select::before { */
+/*   bottom: -6px; */
+/*   right: 0; */
+/*   width: 10px; */
+/*   height: 10px; */
+/*   border: solid; */
+/*   border-radius: 0; */
+/*   border-width: 0 2px 2px 0; */
+/*   @apply bg-zinc-900; */
+/*   @apply border-zinc-400; */
+/*   transform: rotate(45deg); */
+/*   -webkit-transform: rotate(45deg); */
+/* } */
+
+
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='#7c7c83' viewBox='0 0 384 512'%3E%3Cpath d='M192 384c-8.188 0-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L192 306.8l137.4-137.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-160 160C208.4 380.9 200.2 384 192 384z' /%3E%3C/svg%3E");
+  background-repeat: no-repeat !important;
+  background-position-x: 95% !important;
+  background-size: 15px 15px;
+  background-position-y: 50% !important;
+}
+select::-ms-expand {
+  display: none;
+}
