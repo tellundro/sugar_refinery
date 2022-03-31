@@ -1,20 +1,15 @@
 const { app, dialog, BrowserWindow, Menu, ipcMain } = require('electron');
-const { createCanvas, loadImage } = require('canvas');
 const url = require("url");
 const path = require("path");
-const { join } = require('path');
 const fs = require('fs');
+const { Assembler } = require('./assembler.js')
 
 let mainWindow
 const appFolder = app.getPath('userData');
-const lastProjectsFileName = path.join(appFolder, "sugar_refinery_last_projects.txt")
+const recentProjectsFileName = path.join(appFolder, "sugar_refinery_last_projects.txt")
 const previewFolder = path.join(appFolder, "preview")
 
-// and another test
-// create Preview folder it not exists
-if (!fs.existsSync(previewFolder)) {
-  fs.mkdirSync(previewFolder)
-}
+const assembler = new Assembler(appFolder, previewFolder);
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -67,21 +62,21 @@ async function selectTraits() {
   }
 }
 
-function getLastProjects() {
-  let lastProjects;
+function getRecentProjects() {
+  let recentProjects;
   try {
     // read from existing file, if any
-    lastProjects = JSON.parse(fs.readFileSync(lastProjectsFileName))
+    recentProjects = JSON.parse(fs.readFileSync(recentProjectsFileName))
   } catch (err) {
-    console.log(lastProjectsFileName + " does not exist.")
+    console.log(recentProjectsFileName + " does not exist.")
   }
-  return lastProjects;
+  return recentProjects;
 }
 
-function writeLastProjects(lastProjects) {
-  // writeLastProjects
+function writeRecentProjects(recentProjects) {
+  // writeRecentProjects
   try {
-    fs.writeFileSync(lastProjectsFileName, JSON.stringify(lastProjects))
+    fs.writeFileSync(recentProjectsFileName, JSON.stringify(recentProjects))
   } catch (err) {
     console.error(err)
   }
@@ -108,118 +103,28 @@ function saveStateToTxt(data) {
     console.error(err)
   }
   if (success) {
-    let lastProjects = getLastProjects();
-    if (lastProjects) {
+    let recentProjects = getRecentProjects();
+    if (recentProjects) {
       // retrieve project last index in history array
-      let lastIndex = lastProjects.findIndex((entry) => entry.name == data.saveFileName);
+      let lastIndex = recentProjects.findIndex((entry) => entry.saveFileName == data.saveFileName);
       if (lastIndex >= 0) {
         // delete from history if already exists
-        lastProjects.splice(lastIndex, 1);
+        recentProjects.splice(lastIndex, 1);
       }
       // push entry to the top of the list
-      let newEntry = { name: data.saveFileName, fullPath: saveFileFullPath, projName: data.projName }
-      lastProjects.splice(0, 0, newEntry)
+      let newEntry = { saveFileName: data.saveFileName, fullPath: saveFileFullPath, projName: data.projName }
+      recentProjects.splice(0, 0, newEntry)
     } else {
       // create new file
-      lastProjects = [
-        { name: data.saveFileName, fullPath: saveFileFullPath, projName: data.projName },
+      recentProjects = [
+        { saveFileName: data.saveFileName, fullPath: saveFileFullPath, projName: data.projName },
       ]
     }
-    writeLastProjects(lastProjects);
+    writeRecentProjects(recentProjects);
   }
 }
 
-function saveImage(canvas, path) {
-  fs.writeFileSync(
-    path,
-    canvas.toBuffer("image/png")
-  );
-};
-
-async function loadLayerTrait(layer, totalWeight) {
-  let random = Math.random() * totalWeight;
-  let pastWeight = 0;
-  // traverse layer traits and select one that match the
-  // random value
-  for (let t of layer.traits) {
-    if (((random >= pastWeight) &&
-      (random < (pastWeight + parseInt(t.weight, 10)))) ||
-      (random == totalWeight)) {
-      try {
-        let image = await loadImage(t.filePath);
-        return image;
-      } catch (err) {
-        console.error('error loading image')
-      }
-      break;
-    }
-    pastWeight += parseInt(t.weight, 10)
-  }
-}
-
-function getLayerTotalWeight(layer) {
-  let sum = 0;
-  layer.traits.forEach((trait) => sum += parseInt(trait.weight, 10));
-  return sum;
-}
-
-function mustGenerateLayer(layerRarity) {
-  let random = Math.random() * 100
-  // console.log("generateSingleImage: layer rarity" + layerRarity)
-  // console.log("generateSingleImage: random value" + random)
-  return (random <= layerRarity)
-}
-
-async function generateSingleImage(state) {
-  const canvas = createCanvas(600, 600);
-  const ctx = canvas.getContext("2d");
-  ctx.imageSmoothingEnabled = true;
-
-  let images = []
-  let layersTotalWeight = []
-  let loadedLayers = []
-
-  // create array with total trait weight for each layer
-  state.layers.forEach((layer) => {
-    layersTotalWeight.push(getLayerTotalWeight(layer))
-  })
-
-  for (var i = 0; i < state.layers.length; i++) {
-    // decide whether current layer should be included based on layer rarity
-    let generateLayer = mustGenerateLayer(state.layers[i].rarity)
-    // should generate layer
-    if (generateLayer) {
-      // check whether layer has exclusivity with previous loaded layer
-      let skipLayer = loadedLayers.includes(state.layers[i].exclusiveWith)
-      if (!skipLayer) {
-        images.push(await loadLayerTrait(state.layers[i], layersTotalWeight[i]))
-        loadedLayers.push(state.layers[i].name)
-      } else {
-        images.push(null)
-      }
-    }
-    images.push(null)
-  }
-
-  await Promise.all(images).then(imgs => {
-    imgs.forEach(image => {
-      if (image) {
-        ctx.drawImage(image, 0, 0, 600, 600)
-      }
-    })
-  })
-
-  let imgPath = path.join(previewFolder, "preview1.png")
-  saveImage(canvas, imgPath)
-
-  return imgPath;
-}
-
-function generatePreview(event, state) {
-  return generateSingleImage(JSON.parse(state));
-}
-
-function showConfirmDialog() {
+function showDeleteConfirmation() {
   var choice = dialog.showMessageBoxSync(
     {
       type: 'question',
@@ -242,24 +147,25 @@ function deleteSavedState(fullPath) {
 
 async function deleteProject(event, name) {
   console.log("name is " + name)
-  let confirmed = showConfirmDialog()
+  let confirmed = showDeleteConfirmation()
   if (confirmed) {
-    let lastProjects = getLastProjects()
-    if (lastProjects) {
-      let index = lastProjects.findIndex(project => project.name === JSON.parse(name))
-      console.log(lastProjects)
-      console.log(index)
-      console.log("lastProject[0].name: " + lastProjects[0].name + " name: " + JSON.parse(name))
-      // console.log(lastProjects[index].fullPath)
-      deleteSavedState(lastProjects[index].fullPath)
-      lastProjects.splice(index, 1)
+    let recentProjects = getRecentProjects()
+    if (recentProjects) {
+      let index = recentProjects.findIndex(project => project.name === JSON.parse(name))
+      // console.log(recentProjects[index].fullPath)
+      deleteSavedState(recentProjects[index].fullPath)
+      recentProjects.splice(index, 1)
       // remove savedState
-      writeLastProjects(lastProjects)
+      writeRecentProjects(recentProjects)
       return true;
     }
     return false;
   }
   return false;
+}
+
+function generatePreview(event, state) {
+  return assembler.generateSingleImage(JSON.parse(state));
 }
 
 // -------------------------------------------------------------
@@ -268,8 +174,6 @@ async function deleteProject(event, name) {
 
 ipcMain.on('save-to-txt-and-close', (event, data) => {
   saveStateToTxt(data)
-  // save state here to text-file here
-  // update lastest opened projects on localStorage
   app.emit('closed')
 })
 
@@ -279,8 +183,6 @@ ipcMain.on('closeWithoutSave', () => {
 
 ipcMain.on('save-to-txt-and-return', (event, data) => {
   saveStateToTxt(data)
-  // save state here to text-file here
-  // update lastest opened projects on localStorage
   app.emit('ProjectSelection')
 })
 
@@ -294,7 +196,7 @@ ipcMain.handle('dialog:selectFolder', selectFolder)
 
 ipcMain.handle('dialog:selectTraits', selectTraits)
 
-ipcMain.handle('getLastProjects', getLastProjects)
+ipcMain.handle('getRecentProjects', getRecentProjects)
 
 ipcMain.handle('getFileNameFromPath', async (event, fullPath) => {
   const result = path.parse(fullPath).name;
@@ -330,6 +232,10 @@ app.on('window-all-closed', function() {
   if (process.platform !== 'darwin') app.quit()
 });
 
+
+// -------------------------------------------------------------
+// MENU OPTIONS
+// -------------------------------------------------------------
 const template = [
   {
     label: 'File',

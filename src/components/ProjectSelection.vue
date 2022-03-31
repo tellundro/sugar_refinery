@@ -75,7 +75,7 @@ export default {
       });
     }
 
-    window.electronAPI.getLastProjects().then(function(result) {
+    window.electronAPI.getRecentProjects().then(function(result) {
       lastProjects.value = result;
     })
     // console.log(lastProjects)

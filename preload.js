@@ -19,7 +19,7 @@ contextBridge.exposeInMainWorld(
   selectFolder: () => ipcRenderer.invoke('dialog:selectFolder'),
   selectTraits: () => ipcRenderer.invoke('dialog:selectTraits'),
   getFileNameFromPath: (fullPath) => ipcRenderer.invoke('getFileNameFromPath', fullPath),
-  getLastProjects: () => ipcRenderer.invoke('getLastProjects'),
+  getRecentProjects: () => ipcRenderer.invoke('getRecentProjects'),
   getSavedState: (fullPath) => ipcRenderer.invoke('getSavedState', fullPath),
   deleteProject: (name) => ipcRenderer.invoke('deleteProject', name),
   closeWithoutSave: () => ipcRenderer.send('closeWithoutSave'),
