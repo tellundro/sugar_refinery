@@ -151,7 +151,7 @@ async function deleteProject(event, name) {
   if (confirmed) {
     let recentProjects = getRecentProjects()
     if (recentProjects) {
-      let index = recentProjects.findIndex(project => project.name === JSON.parse(name))
+      let index = recentProjects.findIndex(project => project.saveFileName === JSON.parse(name))
       // console.log(recentProjects[index].fullPath)
       deleteSavedState(recentProjects[index].fullPath)
       recentProjects.splice(index, 1)
