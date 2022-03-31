@@ -1,12 +1,12 @@
 <template>
 
-  <div class="flex flex-col w-full pl-10 pr-10 pt-6 h-full gap-4 items-center justify-start pb-12">
+  <div class="flex flex-col w-full pt-6 h-full gap-4 items-center justify-start pb-12">
 
     <!-- Flow char header -->
-    <div class="relative flex flex-col items-left w-832px gap-4 text-3xl">
-      <div class="flex items-center w-full gap-1">
+    <div class="relative flex flex-col items-left w-4/5 min-w-832px gap-4 text-3xl">
+      <div class="flex items-center justify-around w-full gap-1">
         <input placeholder="Collection name..." class="p-1 w-4/6 font-bold placeholder:text-zinc-700 focus:border-zinc-400 focus:outline-none border-transparent border-b rounded-none hover:focus:border-zinc-400 bg-inherit text-inherit" v-model="store.metadata.name"/>
-        <div class="p-2 w-2/6 mt-4 flex flex-col items-start bg-zinc-900 opacity-70 rounded border-b-zinc-400 gap-1 text-sm">
+        <div class="p-2 w-2/6 max-w-xs mt-4 flex flex-col items-start bg-zinc-900 opacity-70 rounded border-b-zinc-400 gap-1 text-sm">
           <div class='flex'>
             <p class="w-32">Layers:</p>
             <p>{{ store.getLayersCount}}</p>

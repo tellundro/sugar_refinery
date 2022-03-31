@@ -1,5 +1,10 @@
 import { defineStore } from 'pinia'
 
+function layerTotalWeight(state, layerIndex) {
+  let sum = 0;
+  state.layers[layerIndex].traits.forEach(layer => sum += parseInt(layer.weight))
+  return sum;
+}
 
 let originalState = {
   // creationTimestamp is a unique project ID for saving purposes
@@ -54,6 +59,8 @@ export const projStore = defineStore('projStore', {
     getLayers: (state) => state.layers,
     getLayerName: (state) => { return (layerId) => state.layers.find(layer => layer.id === layerId).name },
     getLayerIndex: (state) => { return (layerId) => state.layers.findIndex(layer => layer.id === layerId) },
+    getLayerTotalWeight: (state) => { return (layerIndex) => layerTotalWeight(state, layerIndex) },
+    getTraitPercentage: (state) => { return (traitWeight, layerIndex) => ((parseInt(traitWeight) / layerTotalWeight(state, layerIndex)) * 100).toFixed(2).toString() + "%" },
     getLayerTraits: (state) => {
       return (layerId) => state.layers.find(layer => layer.id === layerId).traits
     },

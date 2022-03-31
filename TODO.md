@@ -3,6 +3,8 @@
 
 - add json metadata handling
 - add collection creation logic (validate state for mandatory fields)
+- add percentage indicative to traits
+- add DYNAMIC CANVAS SIZE loading/generating images
 
 
 # DONE

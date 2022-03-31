@@ -100,6 +100,10 @@ body {
   width: 52rem;
 }
 
+.min-w-832px {
+  min-width: 52rem;
+}
+
 .min-h-20 {
   min-height: 5rem;
 }

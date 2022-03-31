@@ -13,7 +13,7 @@ class Assembler {
     }
   }
 
-  async generateSingleImage(state) {
+  async generatePreviewImage(state) {
     const canvas = createCanvas(600, 600);
     const ctx = canvas.getContext("2d");
     ctx.imageSmoothingEnabled = true;
@@ -54,7 +54,6 @@ class Assembler {
 
     let imgPath = path.join(this.previewFolder, "preview1.png")
     this.saveImage(canvas, imgPath)
-
     return imgPath;
   }
 
@@ -77,9 +76,9 @@ class Assembler {
           let image = await loadImage(t.filePath);
           return image;
         } catch (err) {
-          console.error('error loading image')
+          console.error('error loading image ' + err)
+          return null
         }
-        break;
       }
       pastWeight += parseInt(t.weight, 10)
     }
@@ -95,6 +94,10 @@ class Assembler {
     let random = Math.random() * 100
     return (random <= layerRarity)
   }
+
+  // generateCollection(state) {
+  // Treat Metadata
+  // }
 }
 
 module.exports = {

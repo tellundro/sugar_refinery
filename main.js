@@ -165,7 +165,7 @@ async function deleteProject(event, name) {
 }
 
 function generatePreview(event, state) {
-  return assembler.generateSingleImage(JSON.parse(state));
+  return assembler.generatePreviewImage(JSON.parse(state));
 }
 
 // -------------------------------------------------------------

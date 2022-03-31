@@ -1,6 +1,6 @@
 <template>
 
-  <div class='pt-4 pb-8 w-832px self-center flex flex-col justify-center gap-4'> 
+  <div class='pt-4 pb-8 w-4/5 min-w-832px self-center flex flex-col justify-center gap-4'> 
 
     <!-- header -->
     <div class=" flex pt-0 pb-0 justify-between items-center">
@@ -80,30 +80,36 @@
       </button>
     </div>
 
-    <div class="flex flex-wrap gap-6 w-full justify-start items-start p-2">
+    <div class="grid md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 gap-6 mx-auto justify-start items-start p-2">
 
       <div v-for="trait in store.getLayerTraits(layerId)" 
         :key="trait.id"
         :id="trait.id"
-        class="traitDiv flex-col gap-4 justify-left w-36 h-56 border-2 relative align-middle text-center p-2 group">
+        class="traitDiv flex flex-col gap-2 justify-center items-center w-56 border-2 relative align-middle text-center p-2 pt-6 group">
 
-        <div class="w-full h-4/6 flex justify-center item-center">
+        <div class="w-full h-52 mb-4 -center item-center">
           <img class="object-scale-down w-full h-full" :src="trait.filePath" />
         </div>
 
           <!-- trait name -->
         <input 
           v-model="trait.name" 
-          class="text-center placeholder:text-zinc-700 focus:border-zinc-400 text-sm hover:border-zinc-400 w-full focus:outline-none border-transparent border-b rounded-none bg-inherit text-inherit"
+          class="h-8 text-center placeholder:text-zinc-700 focus:border-zinc-400 text-base hover:border-zinc-400 w-full focus:outline-none border-transparent border-b rounded-none bg-inherit text-inherit"
           placeholder="Trait name..." />
 
           <!-- trait weight -->
-        <div class="w-full gap-1 text-sm h-12 flex justify-left items-center">
+        <div class="w-1/2 gap-1 text-base h-8 flex justify-center self-center items-center">
           <p class="w-16 font-bold text-left text-inherit bg-inherit">Weight:</p>
           <input 
             v-model="trait.weight" 
             class="text-center focus:border-zinc-400 hover:border-zinc-400 w-full focus:outline-none border-transparent border-b rounded-none bg-inherit text-inherit" />
         </div>
+
+          <!-- Percentage indicator -->
+        <div class="absolute top-0 left-1 h-6 text-zinc-400 text-sm p-1 flex justify-start bg-zinc-800 group-hover:visible rounded rounded-tl-none rounded-br-none">
+          <p v-text="store.getTraitPercentage(trait.weight, layerIndex)"></p>
+        </div>
+
 
         <!-- trash-can -->
         <div class="absolute top-0 right-0 p-1 invisible flex justify-end bg-zinc-400 group-hover:visible rounded rounded-tl-none rounded-br-none">
@@ -143,11 +149,9 @@ export default {
       for (let i = 0 ; i < traitPaths.length ; i++ ){
         let fileName = await window.electronAPI.getFileNameFromPath(traitPaths[i])
         store.addTraitToLayer(layerId, traitPaths[i], fileName)
-        console.log(layerId)
-        console.log(traitPaths[i])
-        console.log(fileName)
       }
     }
+
 
     return {
       store,
