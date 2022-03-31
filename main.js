@@ -168,6 +168,11 @@ function generatePreview(event, state) {
   return assembler.generatePreviewImage(JSON.parse(state));
 }
 
+function generateCollection(event, state) {
+  return assembler.generateCollection(JSON.parse(state));
+}
+
+
 // -------------------------------------------------------------
 // SIGNALS CODE
 // -------------------------------------------------------------
@@ -189,6 +194,8 @@ ipcMain.on('save-to-txt-and-return', (event, data) => {
 ipcMain.handle('deleteProject', deleteProject)
 
 ipcMain.handle('generatePreview', generatePreview)
+
+ipcMain.handle('generateCollection', generateCollection)
 
 ipcMain.handle("getSavedState", getSavedState)
 

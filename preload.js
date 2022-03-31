@@ -23,5 +23,6 @@ contextBridge.exposeInMainWorld(
   deleteProject: (name) => ipcRenderer.invoke('deleteProject', name),
   closeWithoutSave: () => ipcRenderer.send('closeWithoutSave'),
   generatePreview: (state) => ipcRenderer.invoke('generatePreview', state),
+  generateCollection: (state) => ipcRenderer.invoke('generateCollection', state),
 },
 );

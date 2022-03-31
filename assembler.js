@@ -3,6 +3,42 @@ const { createCanvas, loadImage } = require('canvas');
 const fs = require('fs');
 
 class Assembler {
+
+  metadataList = []
+
+  // First we generate the collection with both the Images and the Metadata
+  // Then we upload the images to a descentralized storage (IPFS/Pinata.. Arweave?)
+  // Then we UPDATE the metadata with the correct IPFS address that points to the FOLDER of the collection
+  // https://www.youtube.com/watch?v=Zhmj4PiJ-GA0 , minuto 33:32s
+
+  metadataStruct = { // metadata for Ethereum
+    name: "", // collection name + #imageNumber
+    description: "", // collection description
+    image: "", // imageURI (ipfs://CID/01.png format)
+    // no need for DNA or HASH code, what matters is the storage address (image attribute)
+    attributes: [ // layer/trait loaded for current image
+      // {
+      //   "trait_type": "layer name",
+      //   "value": "trait name"
+      // },
+    ],
+    tokenId: "", // image number #imageNumber
+    createdWith: "sugar_refinery", // your's truly
+  };
+
+  // extra metadata for Solana
+  solanaExtraMetadata = {
+    symbol: "", // collection symbol
+    seller_fee_basis_points: 1000, // secondary market royalties 1000 = 10%
+    external_url: "", // collection external url/website
+    creators: [
+      {
+        address: "", // solana wallet public address
+        share: 100, // 100 = 100%
+      },
+    ],
+  }
+
   constructor(_appFolder, _previewFolder) {
     this.appFolder = _appFolder;
     this.previewFolder = _previewFolder;
@@ -54,6 +90,8 @@ class Assembler {
 
     let imgPath = path.join(this.previewFolder, "preview1.png")
     this.saveImage(canvas, imgPath)
+
+    // return image path to be shown inside app
     return imgPath;
   }
 
@@ -95,9 +133,9 @@ class Assembler {
     return (random <= layerRarity)
   }
 
-  // generateCollection(state) {
-  // Treat Metadata
-  // }
+  generateCollection(state) {
+    // Treat Metadata
+  }
 }
 
 module.exports = {
