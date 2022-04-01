@@ -23,8 +23,7 @@
     </div>
   </div>
 
-  <div @click="closeError" id="errorMessage" class="z-30 cursor-pointer hover:border-rose-600 hover:border top-0 left-1/2 -translate-x-1/2 p-2 pr-6 invisible absolute bg-zinc-900 text-sm">
-
+  <div @click="closeError" id="errorMessage" class="z-30 pl-20 overflow-y-auto cursor-pointer hover:border-rose-600 hover:border bottom-0 right-0 rounded-none w-full p-2 pr-6 invisible absolute bg-zinc-900 text-sm">
   </div>
 
 </template>
@@ -45,7 +44,7 @@ function createErrorMessages(isReady) {
 
   // error header
   let header = document.createElement('p');
-  header.innerHTML = "Error when generating collection:"
+  header.innerHTML = "Could not generate collection:"
   header.classList.add("text-rose-600")
   header.classList.add("text-sm")
   errorDiv.appendChild(header)
