@@ -13,10 +13,10 @@
       <div class="text-lg w-full text-zinc-500 bg-zinc-900 rounded p-4 pt-2 pb-2 mb-2 align-middle">Existing projects</div>
       <div :id="project.saveFileName" v-for="project in lastProjects" :key="project.saveFileName" 
         class="group relative w-full text-lg flex">
-        <div @click="loadState(project.fullPath)" class="cursor-pointer w-4/5 rounded group-hover:bg-zinc-400 group-hover:text-zinc-800 p-2">
+        <div @click="loadState(project.fullPath)" class="cursor-pointer w-4/5 rounded group-hover:bg-zinc-400 transition-colors group-hover:text-zinc-800 p-2">
         {{ project.projName }}
         </div>
-        <div class="cursor-pointer right-0 p-1 invisible flex justify-end w-1/5 items-center group-hover:visible rounded rounded-tl-none rounded-br-none">
+        <div class="cursor-pointer right-0 p-1 invisible flex justify-end w-1/5 items-center group-hover:visible transition-colors rounded rounded-tl-none rounded-br-none">
           <svg 
             @click="deleteProject(project.saveFileName)"
             class="fill-zinc-400 w-6 h-6 " 

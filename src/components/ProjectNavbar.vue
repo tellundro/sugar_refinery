@@ -18,8 +18,8 @@
     </div>
 
     <div class="w-1/2 gap-4 flex justify-end align-middle">
-      <div @click="generatePreview" class="cursor-pointer hover:bg-zinc-800 p-1 rounded">Preview NFT</div>
-      <div @click="generateCollection" class="cursor-pointer hover:bg-zinc-800 p-1 rounded">Generate Collection</div>
+      <div @click="generatePreview" class="cursor-pointer transition-colors hover:bg-zinc-800 p-1 rounded">Preview NFT</div>
+      <div @click="generateCollection" class="cursor-pointer transition-colors hover:bg-zinc-800 p-1 rounded">Generate Collection</div>
     </div>
   </div>
 
@@ -30,20 +30,9 @@
 
 <script>
 import { projStore } from "@/store/projectStore"
+import { errorMessages } from "./validationErrors.js"
 
 function createErrorMessages(isReady) {
-  const errorMessages = {
-    collectionSize : "&#8226; missing collection size",
-    name : "&#8226; missing collection name",
-    blockchain : "&#8226; missing blockchain selection",
-    outputFolder : "&#8226; missing collection output folder",
-    description : "&#8226; missing collection description",
-    symbol : "&#8226; missing symbol for solana blockchain",
-    externalURL : "&#8226; missing external URL for solana blockchain",
-    creators : "&#8226; missing creators for solana blockchain",
-    sellerFee : "&#8226; missing seller fee for solana blockchain",
-    // add solana metadata errors
-  }
   const errorDiv = document.getElementById("errorMessage")
   errorDiv.replaceChildren()
 
@@ -84,9 +73,7 @@ export default {
     }
 
     async function generateCollection() {
-
       let isReady = store.isReadyForCollection;
-
       if (isReady.ready) {
         console.log("is ready");
       } else {

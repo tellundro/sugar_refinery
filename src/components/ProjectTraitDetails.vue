@@ -140,18 +140,17 @@ export default {
 
     const layerIndex = store.getLayerIndex(layerId);
 
-    const hasPrevLayer = (layerIndex > 0) ? true : false;
-    const hasNextLayer = (layerIndex < (store.getLayersCount - 1)) ? true : false;
+    const hasPrevLayer = (layerIndex > 0);
+    const hasNextLayer = (layerIndex < (store.getLayersCount - 1));
 
     async function selectTraits() {
       const traitPaths = await window.electronAPI.selectTraits();
 
       for (let i = 0 ; i < traitPaths.length ; i++ ){
-        let fileName = await window.electronAPI.getFileNameFromPath(traitPaths[i])
-        store.addTraitToLayer(layerId, traitPaths[i], fileName)
+        let fileName = await window.electronAPI.getFileNameFromPath(traitPaths[i]);
+        store.addTraitToLayer(layerId, traitPaths[i], fileName);
       }
     }
-
 
     return {
       store,

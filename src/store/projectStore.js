@@ -6,8 +6,8 @@ function layerTotalWeight(state, layerIndex) {
   return sum;
 }
 
-function isReadyForCollection(state) {
-  let readyForCollection = {
+function validateState(state) {
+  let validationObj = {
     outputFolder: (state.metadata.outputFolder.length > 0),
     collectionSize: (state.metadata.collectionSize.length > 0),
     name: (state.metadata.name.length > 0),
@@ -16,21 +16,22 @@ function isReadyForCollection(state) {
   };
 
   if (state.metadata.blockchain === "solana") {
-    readyForCollection.symbol = (state.metadata.symbol.length > 0);
-    readyForCollection.sellerFee = (state.metadata.sellerFee.length > 0);
-    readyForCollection.externalURL = (state.metadata.externalURL.length > 0);
-    readyForCollection.creators = (state.metadata.creators.length > 0);
+    validationObj.symbol = (state.metadata.symbol.length > 0);
+    validationObj.sellerFee = (state.metadata.sellerFee.length > 0);
+    validationObj.externalURL = (state.metadata.externalURL.length > 0);
+    validationObj.creators = (state.metadata.creators.length > 0);
+    // TODO validate each creator object
   }
 
-  for (const prop in readyForCollection) {
-    if (!readyForCollection[prop]) {
-      readyForCollection.ready = false;
-      return readyForCollection;
+  for (const prop in validationObj) {
+    if (!validationObj[prop]) {
+      validationObj.ready = false;
+      return validationObj;
     }
   }
 
-  readyForCollection.ready = true;
-  return readyForCollection;
+  validationObj.ready = true;
+  return validationObj;
 }
 
 let originalState = {
@@ -42,12 +43,11 @@ let originalState = {
     name: "",
     author: "",
     description: "",
-    externalUrl: "",
+    externalURL: "",
     blockchain: "",
     // Solana metadata
     symbol: "", // collection symbol
     sellerFee: "", // secondary market royalties 1000 = 10%
-    externalURL: "", // collection external url/website
     creators: [
       // {
       //   address: "", // solana wallet public address
@@ -86,11 +86,9 @@ export const projStore = defineStore('projStore', {
     // getters are computed automatically
     projName: (state) => state.metadata.name,
     projMetadata: (state) => state.metadata,
-    isReadyForCollection: (state) => isReadyForCollection(state),
+    isReadyForCollection: (state) => validateState(state),
     isSolana: (state) => state.metadata.blockchain === "solana",
     isOriginalState: (state) => {
-      // console.log(JSON.stringify(originalState))
-      // console.log(JSON.stringify(state.getState))
       return (JSON.stringify(originalState) === JSON.stringify(state.getState))
     },
     getPreviousLayers: (state) => { return (layerIndex) => state.layers.slice(0, layerIndex) },
@@ -109,7 +107,6 @@ export const projStore = defineStore('projStore', {
     getTraitsCount: (state) => {
       let sum = 0;
       for (var i = 0; i < state.layers.length; i++) {
-        // console.log("sum is " + sum)
         sum = sum + state.layers[i].traits.length;
       }
       return sum;
@@ -198,33 +195,14 @@ export const projStore = defineStore('projStore', {
         }
       )
     },
-    updateLayersOrder(newLayersOrders) {
-      // newLayersOrders is an array of strings
-      // with the new order of categories
+    updateLayersOrder(newLayersOrder) {
       let _layers = []
-
-      // traverse newTraitsCategoreis array
-      // find the corresponding layers objects, according to the new order
-      // push it into _layers array
-      // then redefine this.layers to this new array
-      for (let i = 0; i < newLayersOrders.length; i++) {
-        let found = this.layers.find(traitCategory => traitCategory.id === newLayersOrders[i])
-        // console.log("updateLayersOrder category found: " + found.id)
+      for (let i = 0; i < newLayersOrder.length; i++) {
+        let found = this.layers.find(traitCategory => traitCategory.id === newLayersOrder[i])
         _layers.push(found)
-        // for (var j = 0; j < this.layers.length(); j++) {
-        //   if (this.layers[j].name == newLayersOrders[i]) {
-        //     _layers.push(this.layers[j]);
-        //     break;
-        //   }
-        //   console.log("Trait category" + newLayersOrders + "not found, something has gone wrong")
-        // }
       }
-
       this.layers = _layers;
     }
-    // increment() {
-    //   this.count++
-    // },
   },
 })
 
