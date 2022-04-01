@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-20 min-h-20 justify-around items-center w-full pt-4 pr-4 pl-4 pb-4 bg-zinc-900 rounded-none z-10">
+  <div class="flex h-20 min-h-20 justify-around relative items-center w-full pt-4 pr-4 pl-4 pb-4 bg-zinc-900 rounded-none z-10">
 
     <div class="flex w-1/2 gap-4 justify-start">
       <!-- Link to project metadata -->
@@ -19,8 +19,11 @@
 
     <div class="w-1/2 gap-4 flex justify-end align-middle">
       <div @click="generatePreview" class="cursor-pointer hover:bg-zinc-800 p-1 rounded">Preview NFT</div>
-      <div class="cursor-pointer hover:bg-zinc-800 p-1 rounded">Generate Collection</div>
+      <div @click="generateCollection" class="cursor-pointer hover:bg-zinc-800 p-1 rounded">Generate Collection</div>
     </div>
+  </div>
+
+  <div @click="closeError" id="errorMessage" class="z-30 cursor-pointer hover:border-rose-600 hover:border top-0 left-1/2 -translate-x-1/2 p-2 pr-6 invisible absolute bg-zinc-900 text-sm">
 
   </div>
 
@@ -28,6 +31,36 @@
 
 <script>
 import { projStore } from "@/store/projectStore"
+
+function createErrorMessages(isReady) {
+  const errorMessages = {
+    collectionSize : "&#8226; missing collection size",
+    name : "&#8226; missing collection name",
+    blockchain : "&#8226; missing blockchain selection",
+    outputFolder : "&#8226; missing collection output folder",
+    description : "&#8226; missing collection description"
+  }
+  const errorDiv = document.getElementById("errorMessage")
+  errorDiv.replaceChildren()
+
+  // error header
+  let header = document.createElement('p');
+  header.innerHTML = "Error when generating collection:"
+  header.classList.add("text-rose-600")
+  header.classList.add("text-sm")
+  errorDiv.appendChild(header)
+
+  // error messages
+  for(const prop in isReady) {
+    if(!isReady[prop] && prop !== "ready") {
+      let err = document.createElement('p');
+      err.classList.add("text-rose-600")
+      err.innerHTML = errorMessages[prop];
+      errorDiv.appendChild(err);
+    }
+  }
+  errorDiv.classList.remove("invisible");
+}
 
 export default {
   name: 'ProjectNavbar',
@@ -43,8 +76,27 @@ export default {
       console.log(previewImg)
     }
 
+    function closeError() {
+      let errorDiv = document.getElementById("errorMessage")
+      errorDiv.classList.add("invisible")
+      errorDiv.replaceChildren()
+    }
+
+    async function generateCollection() {
+
+      let isReady = store.isReadyForCollection;
+
+      if (isReady.ready) {
+        console.log("is ready");
+      } else {
+        createErrorMessages(isReady) 
+      }
+    }
+
     return {
       generatePreview,
+      generateCollection,
+      closeError
     }
   },
 }

@@ -9,7 +9,7 @@ class Assembler {
   // First we generate the collection with both the Images and the Metadata
   // Then we upload the images to a descentralized storage (IPFS/Pinata.. Arweave?)
   // Then we UPDATE the metadata with the correct IPFS address that points to the FOLDER of the collection
-  // https://www.youtube.com/watch?v=Zhmj4PiJ-GA0 , minuto 33:32s
+  // Explanation in: https://www.youtube.com/watch?v=Zhmj4PiJ-GA0 , minuto 33:32s
 
   metadataStruct = { // metadata for Ethereum
     name: "", // collection name + #imageNumber
@@ -134,6 +134,7 @@ class Assembler {
   }
 
   generateCollection(state) {
+    collectionSize = parseInt(state.metadata.collectionSize)
     // Treat Metadata
   }
 }

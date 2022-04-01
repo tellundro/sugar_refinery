@@ -6,6 +6,26 @@ function layerTotalWeight(state, layerIndex) {
   return sum;
 }
 
+function isReadyForCollection(state) {
+  let readyForCollection = {
+    outputFolder: (state.metadata.outputFolder.length > 0),
+    collectionSize: (state.metadata.collectionSize.length > 0),
+    name: (state.metadata.name.length > 0),
+    description: (state.metadata.description.length > 0),
+    blockchain: (state.metadata.blockchain.length > 0),
+  };
+
+  for (const prop in readyForCollection) {
+    if (!readyForCollection[prop]) {
+      readyForCollection.ready = false;
+      return readyForCollection;
+    }
+  }
+
+  readyForCollection.ready = true;
+  return readyForCollection;
+}
+
 let originalState = {
   // creationTimestamp is a unique project ID for saving purposes
   creationTimestamp: Date.now(),
@@ -49,6 +69,7 @@ export const projStore = defineStore('projStore', {
     // getters are computed automatically
     projName: (state) => state.metadata.name,
     projMetadata: (state) => state.metadata,
+    isReadyForCollection: (state) => isReadyForCollection(state),
     isOriginalState: (state) => {
       // console.log(JSON.stringify(originalState))
       // console.log(JSON.stringify(state.getState))
