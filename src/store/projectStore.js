@@ -15,6 +15,13 @@ function isReadyForCollection(state) {
     blockchain: (state.metadata.blockchain.length > 0),
   };
 
+  if (state.metadata.blockchain === "solana") {
+    readyForCollection.symbol = (state.metadata.symbol.length > 0);
+    readyForCollection.sellerFee = (state.metadata.sellerFee.length > 0);
+    readyForCollection.externalURL = (state.metadata.externalURL.length > 0);
+    readyForCollection.creators = (state.metadata.creators.length > 0);
+  }
+
   for (const prop in readyForCollection) {
     if (!readyForCollection[prop]) {
       readyForCollection.ready = false;
@@ -37,6 +44,16 @@ let originalState = {
     description: "",
     externalUrl: "",
     blockchain: "",
+    // Solana metadata
+    symbol: "", // collection symbol
+    sellerFee: "", // secondary market royalties 1000 = 10%
+    externalURL: "", // collection external url/website
+    creators: [
+      // {
+      //   address: "", // solana wallet public address
+      //   share: "", // 100 = 100%
+      // },
+    ],
   },
   layerCounter: 0,
   layers: [
@@ -70,6 +87,7 @@ export const projStore = defineStore('projStore', {
     projName: (state) => state.metadata.name,
     projMetadata: (state) => state.metadata,
     isReadyForCollection: (state) => isReadyForCollection(state),
+    isSolana: (state) => state.metadata.blockchain === "solana",
     isOriginalState: (state) => {
       // console.log(JSON.stringify(originalState))
       // console.log(JSON.stringify(state.getState))
@@ -145,6 +163,20 @@ export const projStore = defineStore('projStore', {
           weight: 1
         }
       )
+    },
+
+    addCreator() {
+      this.metadata.creators.push(
+        {
+          address: "",
+          share: ""
+        }
+      )
+    },
+
+    deleteCreator(address) {
+      const index = this.metadata.creators.findIndex(creator => creator.address == address)
+      this.metadata.creators.splice(index, 1)
     },
 
     addLayer() {
