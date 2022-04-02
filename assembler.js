@@ -42,63 +42,52 @@ class Assembler {
   constructor(_appFolder, _previewFolder) {
     this.appFolder = _appFolder;
     this.previewFolder = _previewFolder;
+    this.canvas;
+    this.ctx;
 
     // create Preview folder it not exists
-    if (!fs.existsSync(this.previewFolder)) {
-      fs.mkdirSync(this.previewFolder)
+    this.checkAndCreateFolder(this.previewFolder)
+  }
+
+  checkAndCreateFolder(folder) {
+    if (!fs.existsSync(folder)) {
+      fs.mkdirSync(folder)
     }
   }
 
   async generatePreviewImage(state) {
-    const canvas = createCanvas(600, 600);
-    const ctx = canvas.getContext("2d");
-    ctx.imageSmoothingEnabled = true;
+    const width = parseInt(state.metadata.width, 10)
+    const height = parseInt(state.metadata.height, 10)
 
-    let images = []
-    let layersTotalWeight = []
-    let loadedLayers = []
+    let imgPath = path.join(this.previewFolder, "preview1.png");
 
-    // create array with total trait weight for each layer
-    state.layers.forEach((layer) => {
-      layersTotalWeight.push(this.getLayerTotalWeight(layer))
-    })
+    this.canvas = createCanvas(width, height)
+    this.ctx = this.canvas.getContext("2d");
+    this.ctx.imageSmoothingEnabled = true;
 
-    for (var i = 0; i < state.layers.length; i++) {
-      // decide whether current layer should be included based on layer rarity
-      let generateLayer = this.mustGenerateLayer(state.layers[i].rarity)
-      // should generate layer
-      if (generateLayer) {
-        // check whether layer has exclusivity with previous loaded layer
-        let skipLayer = loadedLayers.includes(state.layers[i].exclusiveWith)
-        if (!skipLayer) {
-          images.push(await this.loadLayerTrait(state.layers[i], layersTotalWeight[i]))
-          loadedLayers.push(state.layers[i].name)
-        } else {
-          images.push(null)
-        }
-      }
-      images.push(null)
-    }
+    let layersTotalWeight = this.getLayersTotalWeight(state)
 
-    await Promise.all(images).then(imgs => {
-      imgs.forEach(image => {
+    let imageObj = await this.generateSingleImage(state, layersTotalWeight)
+
+    Promise.all(imageObj.imgLayers).then(_layers => {
+      // paste all images onto canvas
+      _layers.forEach(image => {
         if (image) {
-          ctx.drawImage(image, 0, 0, 600, 600)
+          this.ctx.drawImage(image, 0, 0, this.canvas.width, this.canvas.height)
         }
       })
+
+      this.saveImage(imgPath);
     })
 
-    let imgPath = path.join(this.previewFolder, "preview1.png")
-    this.saveImage(canvas, imgPath)
-
-    // return image path to be shown inside app
     return imgPath;
   }
 
-  saveImage(canvas, path) {
+  saveImage(path) {
+    console.log("saveImage: saving to " + path)
     fs.writeFileSync(
       path,
-      canvas.toBuffer("image/png")
+      this.canvas.toBuffer("image/png")
     );
   };
 
@@ -106,19 +95,22 @@ class Assembler {
     let random = Math.random() * totalWeight;
     let pastWeight = 0;
     // traverse layer traits and select one that match the random value
-    for (let t of layer.traits) {
+    for (let trait of layer.traits) {
       if (((random >= pastWeight) &&
-        (random < (pastWeight + parseInt(t.weight, 10)))) ||
+        (random < (pastWeight + parseInt(trait.weight, 10)))) ||
         (random == totalWeight)) {
         try {
-          let image = await loadImage(t.filePath);
-          return image;
+          let image = await loadImage(trait.filePath);
+          return {
+            img: image,
+            metadata: { layer_name: layer.name, trait_name: trait.name }
+          };
         } catch (err) {
           console.error('error loading image ' + err)
           return null
         }
       }
-      pastWeight += parseInt(t.weight, 10)
+      pastWeight += parseInt(trait.weight, 10)
     }
   }
 
@@ -133,9 +125,131 @@ class Assembler {
     return (random <= layerRarity)
   }
 
-  generateCollection(state) {
-    collectionSize = parseInt(state.metadata.collectionSize)
+  getLayersTotalWeight(state) {
+    let layersTotalWeight = []
+
+    // create array with total trait weight for each layer
+    state.layers.forEach((layer) => {
+      layersTotalWeight.push(this.getLayerTotalWeight(layer))
+    })
+
+    return layersTotalWeight
+  }
+
+  async generateSingleImage(state, layersTotalWeight,) {
+
+    let layers = []
+    let imgMetadata = []
+
+    for (var i = 0; i < state.layers.length; i++) {
+      // decide whether current layer should be included based on layer rarity
+      let generateLayer = this.mustGenerateLayer(state.layers[i].rarity)
+      // should generate layer
+      if (generateLayer) {
+        // check whether layer has exclusivity with previous loaded layer
+        let skipLayer = imgMetadata.find(layer => layer.layer_name == state.layers[i].exclusiveWith)
+        if (!skipLayer) {
+          let loadedLayer = await this.loadLayerTrait(state.layers[i], layersTotalWeight[i])
+          layers.push(loadedLayer.img)
+          imgMetadata.push(loadedLayer.metadata)
+        } else {
+          imgMetadata.push({ layer_name: state.layers[i].name, trait_name: null })
+        }
+      } else {
+        imgMetadata.push({ layer_name: state.layers[i].name, trait_name: null })
+      }
+    }
+
+    return { imgLayers: layers, imgMetadata: imgMetadata }
+  }
+
+  isUnique(collectionMetadata, metadata) {
+    // check whether metadata is unique in collection metadata
+    // console.log(collectionMetadata)
+    // console.log(metadata)
+    return true;
+  }
+
+  writeMetadata(metadata, path) {
+    // writeRecentProjects
+    try {
+      Promise.all(metadata).then(collectionMetadata => {
+        fs.writeFileSync(path, JSON.stringify(collectionMetadata))
+      })
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  async generateCollection(state) {
+    let collectionSize = parseInt(state.metadata.collectionSize);
+
+    let outputFolder = state.metadata.outputFolder;
+    let imgsFolder = path.join(outputFolder, "images");
+    let metasFolder = path.join(outputFolder, "metadata");
+
+    this.checkAndCreateFolder(outputFolder)
+    this.checkAndCreateFolder(imgsFolder)
+    this.checkAndCreateFolder(metasFolder)
+
+    let width = parseInt(state.metadata.width);
+    let height = parseInt(state.metadata.height);
+
+    this.canvas = createCanvas(width, height)
+    this.ctx = this.canvas.getContext("2d");
+    this.ctx.imageSmoothingEnabled = true;
+
+    // TODO
+    // PRELOAD ALL IMAGE TRAITS TO AVOID HAVING TO LOAD EACH ONE EVERYTIME
+
+    let collectionMetadata = []
+
+    let layersTotalWeight = this.getLayersTotalWeight(state)
+
+    // main collection generation loop
+    let nftsCount = 0;
+    while (nftsCount < collectionSize) {
+
+      let imgName = this.getImageName(nftsCount) + ".png";
+      let imgPath = path.join(imgsFolder, imgName);
+
+      let imageObj = await this.generateSingleImage(state, layersTotalWeight);
+
+      if (this.isUnique(imageObj.metadata, collectionMetadata)) {
+
+        Promise.all(imageObj.imgLayers).then(_layers => {
+          // paste all images onto canvas
+          _layers.forEach(image => {
+            if (image) {
+              this.ctx.drawImage(image, 0, 0, this.canvas.width, this.canvas.height)
+            }
+          })
+
+          this.saveImage(imgPath);
+        })
+
+        collectionMetadata.push({ imageName: imgName, metadata: imageObj.imgMetadata })
+        nftsCount++;
+      }
+    }
+
+    this.writeMetadata(collectionMetadata, path.join(metasFolder, "metadata.json"))
+
     // Treat Metadata
+    return true;
+  }
+
+  getImageName(count) {
+    let countStr = count.toString()
+    let strLen = countStr.length
+
+    let prefix = "";
+    if (strLen < 5) {
+      for (var i = 0; i < (5 - strLen); i++) {
+        prefix = prefix + "0"
+      }
+    }
+    return prefix + countStr
   }
 }
 

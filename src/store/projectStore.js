@@ -6,13 +6,31 @@ function layerTotalWeight(state, layerIndex) {
   return sum;
 }
 
-function validateState(state) {
+function validateStateForPreview(state) {
+  let validationObj = {
+    width: (parseInt(state.metadata.width, 10) > 0),
+    height: (parseInt(state.metadata.height, 10) > 0),
+  }
+  for (const prop in validationObj) {
+    if (!validationObj[prop]) {
+      validationObj.ready = false;
+      return validationObj;
+    }
+  }
+
+  validationObj.ready = true;
+  return validationObj;
+}
+
+function validateStateForCollection(state) {
   let validationObj = {
     outputFolder: (state.metadata.outputFolder.length > 0),
     collectionSize: (state.metadata.collectionSize.length > 0),
     name: (state.metadata.name.length > 0),
     description: (state.metadata.description.length > 0),
     blockchain: (state.metadata.blockchain.length > 0),
+    width: (parseInt(state.metadata.width, 10) > 0),
+    height: (parseInt(state.metadata.height, 10) > 0),
   };
 
   if (state.metadata.blockchain === "solana") {
@@ -43,6 +61,8 @@ let originalState = {
     name: "",
     author: "",
     description: "",
+    width: "",
+    height: "",
     externalURL: "",
     blockchain: "",
     // Solana metadata
@@ -86,7 +106,8 @@ export const projStore = defineStore('projStore', {
     // getters are computed automatically
     projName: (state) => state.metadata.name,
     projMetadata: (state) => state.metadata,
-    isReadyForCollection: (state) => validateState(state),
+    isReadyForPreview: (state) => validateStateForPreview(state),
+    isReadyForCollection: (state) => validateStateForCollection(state),
     isSolana: (state) => state.metadata.blockchain === "solana",
     isOriginalState: (state) => {
       return (JSON.stringify(originalState) === JSON.stringify(state.getState))

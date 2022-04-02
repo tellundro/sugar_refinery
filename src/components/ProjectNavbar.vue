@@ -61,9 +61,14 @@ export default {
     const store = projStore()
 
     async function generatePreview() {
-      let _state = JSON.stringify(store.getState)
-      const previewImg = await window.electronAPI.generatePreview(_state);
-      window.open(previewImg, '_blank', 'right=100, top=100, frame=true,nodeIntegration=no')
+      let readyForPreview = store.isReadyForPreview
+      if (readyForPreview.ready) {
+        let _state = JSON.stringify(store.getState)
+        const previewImg = await window.electronAPI.generatePreview(_state);
+        window.open(previewImg, '_blank', 'right=100, top=100, frame=true,nodeIntegration=no')
+      } else {
+        createErrorMessages(readyForPreview) 
+      }
     }
 
     function closeError() {
@@ -75,7 +80,9 @@ export default {
     async function generateCollection() {
       let isReady = store.isReadyForCollection;
       if (isReady.ready) {
-        console.log("is ready");
+        let _state = JSON.stringify(store.getState)
+        const collection = await window.electronAPI.generateCollection(_state)
+        console.log(collection)
       } else {
         createErrorMessages(isReady) 
       }
