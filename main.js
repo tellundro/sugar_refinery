@@ -82,7 +82,7 @@ function writeRecentProjects(recentProjects) {
   }
 }
 
-function getSavedState(event, fullPath) {
+function loadStateFromFile(event, fullPath) {
   let savedState;
   try {
     // read from existing file, if any
@@ -197,7 +197,7 @@ ipcMain.handle('generatePreview', generatePreview)
 
 ipcMain.handle('generateCollection', generateCollection)
 
-ipcMain.handle("getSavedState", getSavedState)
+ipcMain.handle("loadStateFromFile", loadStateFromFile)
 
 ipcMain.handle('dialog:selectFolder', selectFolder)
 

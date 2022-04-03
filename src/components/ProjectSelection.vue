@@ -62,7 +62,7 @@ export default {
 
     function loadState(fullPath){
       console.log(fullPath)
-      window.electronAPI.getSavedState(fullPath).then(function(result) {
+      window.electronAPI.loadStateFromFile(fullPath).then(function(result) {
         store.$state = result;
         router.push({ path : '/project-home/metadata' })
       });

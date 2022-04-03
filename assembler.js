@@ -210,7 +210,7 @@ class Assembler {
     let nftsCount = 0;
     while (nftsCount < collectionSize) {
 
-      let imgName = this.getImageName(nftsCount) + ".png";
+      let imgName = this.strFill(nftsCount, 5) + ".png";
       let imgPath = path.join(imgsFolder, imgName);
 
       let imageObj = await this.generateSingleImage(state, layersTotalWeight);
@@ -233,19 +233,21 @@ class Assembler {
       }
     }
 
+    // Treat Metadata
+    // Write metadata before uploading images to IPFS
+    // After that, update and write each json file, for each image
     this.writeMetadata(collectionMetadata, path.join(metasFolder, "metadata.json"))
 
-    // Treat Metadata
     return true;
   }
 
-  getImageName(count) {
+  strFill(count, strSize) {
     let countStr = count.toString()
     let strLen = countStr.length
 
     let prefix = "";
-    if (strLen < 5) {
-      for (var i = 0; i < (5 - strLen); i++) {
+    if (strLen < strSize) {
+      for (var i = 0; i < (strSize - strLen); i++) {
         prefix = prefix + "0"
       }
     }
