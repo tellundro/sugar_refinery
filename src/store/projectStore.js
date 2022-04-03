@@ -65,6 +65,8 @@ let originalState = {
     height: "",
     externalURL: "",
     blockchain: "",
+    ipfsURI: "",
+    collectionGenerated: false,
     // Solana metadata
     symbol: "", // collection symbol
     sellerFee: "", // secondary market royalties 1000 = 10%
@@ -135,8 +137,9 @@ export const projStore = defineStore('projStore', {
     getPermutationCount: (state) => {
       let permutations = 1;
 
-      state.layers.forEach(function(categories) {
-        let layerFactor = (categories.traits.length > 0) ? categories.traits.length : 1;
+      state.layers.forEach(function(layer) {
+        let layerFactor = (layer.traits.length > 0) ? layer.traits.length : 1;
+        if (parseInt(layer.rarity, 10) < 100) { layerFactor++ }
         permutations = layerFactor * permutations;
       })
       return permutations.toLocaleString('en-US')
@@ -152,6 +155,9 @@ export const projStore = defineStore('projStore', {
 
   },
   actions: {
+    setCollectionGenerated(bool) {
+      this.metadata.collectionGenerated = bool;
+    },
     setOutputFolder(path) {
       this.metadata.outputFolder = path;
     },

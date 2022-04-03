@@ -2,10 +2,13 @@
 
 - create collection generation page (for creating/updating metadata for collections)
 - add field for updating IPFS address (collection folder CID)
-- add logic to update json metadata for each image 
-- add Overlay About Page (over the whole app, lightbox like)
+- add logic to generate json metadata for each image 
 - PRELOAD ALL IMAGE TRAITS TO AVOID HAVING TO LOAD EACH ONE EVERY TIME
 - pack and distribute first release
+- collection trait rarity (layer name / trait name) visualization (trait name, weight, appearances)
+- add Overlay About Page (over the whole app, lightbox like)
+- compare getPermutations to collection size (when validating state for generating collection)
+- improve getPermutations (not returning correct value when exclusiveWith is configured)
 
 
 # DONE

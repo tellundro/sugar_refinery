@@ -38,7 +38,7 @@ function createErrorMessages(isReady) {
 
   // error header
   let header = document.createElement('p');
-  header.innerHTML = "Could not generate collection:"
+  header.innerHTML = "Could not generate files:"
   header.classList.add("text-rose-600")
   header.classList.add("text-sm")
   errorDiv.appendChild(header)
@@ -65,7 +65,12 @@ export default {
       if (readyForPreview.ready) {
         let _state = JSON.stringify(store.getState)
         const previewImg = await window.electronAPI.generatePreview(_state);
-        window.open(previewImg, '_blank', 'right=100, top=100, frame=true,nodeIntegration=no')
+
+        if(previewImg) {
+          window.open(previewImg, '_blank', 'right=100, top=100, frame=true,nodeIntegration=no')
+        } else {
+          createErrorMessages({ preview : false }) 
+        }
       } else {
         createErrorMessages(readyForPreview) 
       }
@@ -83,6 +88,7 @@ export default {
         let _state = JSON.stringify(store.getState)
         const collection = await window.electronAPI.generateCollection(_state)
         console.log(collection)
+        store.setCollectionGenerated(true);
       } else {
         createErrorMessages(isReady) 
       }

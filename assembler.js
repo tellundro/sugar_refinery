@@ -67,7 +67,13 @@ class Assembler {
 
     let layersTotalWeight = this.getLayersTotalWeight(state)
 
-    let imageObj = await this.generateSingleImage(state, layersTotalWeight)
+    let imageObj;
+    try {
+      imageObj = await this.generateSingleImage(state, layersTotalWeight);
+    } catch (err) {
+      // error
+      return false;
+    }
 
     Promise.all(imageObj.imgLayers).then(_layers => {
       // paste all images onto canvas
@@ -79,7 +85,6 @@ class Assembler {
 
       this.saveImage(imgPath);
     })
-
     return imgPath;
   }
 
@@ -107,7 +112,7 @@ class Assembler {
           };
         } catch (err) {
           console.error('error loading image ' + err)
-          return null
+          throw err;
         }
       }
       pastWeight += parseInt(trait.weight, 10)
@@ -149,9 +154,13 @@ class Assembler {
         // check whether layer has exclusivity with previous loaded layer
         let skipLayer = imgMetadata.find(layer => layer.layer_name == state.layers[i].exclusiveWith)
         if (!skipLayer) {
-          let loadedLayer = await this.loadLayerTrait(state.layers[i], layersTotalWeight[i])
-          layers.push(loadedLayer.img)
-          imgMetadata.push(loadedLayer.metadata)
+          try {
+            let loadedLayer = await this.loadLayerTrait(state.layers[i], layersTotalWeight[i])
+            layers.push(loadedLayer.img)
+            imgMetadata.push(loadedLayer.metadata)
+          } catch (err) {
+            throw err
+          }
         } else {
           imgMetadata.push({ layer_name: state.layers[i].name, trait_name: null })
         }
@@ -213,10 +222,15 @@ class Assembler {
       let imgName = this.strFill(nftsCount, 5) + ".png";
       let imgPath = path.join(imgsFolder, imgName);
 
-      let imageObj = await this.generateSingleImage(state, layersTotalWeight);
+      let imageObj;
+      try {
+        imageObj = await this.generateSingleImage(state, layersTotalWeight);
+      } catch (err) {
+        // error
+        return false;
+      }
 
       if (this.isUnique(imageObj.metadata, collectionMetadata)) {
-
         Promise.all(imageObj.imgLayers).then(_layers => {
           // paste all images onto canvas
           _layers.forEach(image => {
@@ -228,7 +242,8 @@ class Assembler {
           this.saveImage(imgPath);
         })
 
-        collectionMetadata.push({ imageName: imgName, metadata: imageObj.imgMetadata })
+        // write metadata to each?
+        collectionMetadata.push({ name: imgName, metadata: imageObj.imgMetadata })
         nftsCount++;
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
@@ -236,7 +251,7 @@ class Assembler {
     }
 
     // Treat Metadata
-    // Write metadata before uploading images to IPFS
+    // Write metadata.json before uploading images to IPFS
     // After that, update and write each json file, for each image
     this.writeMetadata(collectionMetadata, path.join(metasFolder, "metadata.json"))
 

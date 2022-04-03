@@ -10,7 +10,7 @@ const errorMessages = {
   externalURL: "&#8226; missing external URL for solana blockchain",
   creators: "&#8226; missing creators for solana blockchain",
   sellerFee: "&#8226; missing seller fee for solana blockchain",
-
+  preview: "&#8226; error generating preview image. Be sure to have loaded image traits to all layers",
   // add solana metadata errors
 }
 
