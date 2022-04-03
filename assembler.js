@@ -72,7 +72,7 @@ class Assembler {
       imageObj = await this.generateSingleImage(state, layersTotalWeight);
     } catch (err) {
       // error
-      return false;
+      return this.getReturnObject(false, err)
     }
 
     Promise.all(imageObj.imgLayers).then(_layers => {
@@ -85,7 +85,13 @@ class Assembler {
 
       this.saveImage(imgPath);
     })
-    return imgPath;
+
+    return this.getReturnObject(true, imgPath);
+    // return { allGood: true, data: imgPath };
+  }
+
+  getReturnObject(bool, data) {
+    return { success: bool, data: data }
   }
 
   saveImage(path) {
@@ -111,7 +117,6 @@ class Assembler {
             metadata: { layer_name: layer.name, trait_name: trait.name }
           };
         } catch (err) {
-          console.error('error loading image ' + err)
           throw err;
         }
       }
@@ -227,7 +232,8 @@ class Assembler {
         imageObj = await this.generateSingleImage(state, layersTotalWeight);
       } catch (err) {
         // error
-        return false;
+        console.log("error: " + err)
+        return this.getReturnObject(false, err);
       }
 
       if (this.isUnique(imageObj.metadata, collectionMetadata)) {
@@ -254,8 +260,7 @@ class Assembler {
     // Write metadata.json before uploading images to IPFS
     // After that, update and write each json file, for each image
     this.writeMetadata(collectionMetadata, path.join(metasFolder, "metadata.json"))
-
-    return true;
+    return this.getReturnObject(true, null);
   }
 
   strFill(count, strSize) {

@@ -13,12 +13,12 @@ function validateStateForPreview(state) {
   }
   for (const prop in validationObj) {
     if (!validationObj[prop]) {
-      validationObj.ready = false;
+      validationObj.success = false;
       return validationObj;
     }
   }
 
-  validationObj.ready = true;
+  validationObj.success = true;
   return validationObj;
 }
 
@@ -43,12 +43,12 @@ function validateStateForCollection(state) {
 
   for (const prop in validationObj) {
     if (!validationObj[prop]) {
-      validationObj.ready = false;
+      validationObj.success = false;
       return validationObj;
     }
   }
 
-  validationObj.ready = true;
+  validationObj.success = true;
   return validationObj;
 }
 

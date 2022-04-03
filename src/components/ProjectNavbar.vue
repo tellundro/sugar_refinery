@@ -32,7 +32,7 @@
 import { projStore } from "@/store/projectStore"
 import { errorMessages } from "./validationErrors.js"
 
-function createErrorMessages(isReady) {
+function createErrorPanel(obj) {
   const errorDiv = document.getElementById("errorMessage")
   errorDiv.replaceChildren()
 
@@ -44,11 +44,18 @@ function createErrorMessages(isReady) {
   errorDiv.appendChild(header)
 
   // error messages
-  for(const prop in isReady) {
-    if(!isReady[prop] && prop !== "ready") {
+  for(const prop in obj) {
+    if(!obj[prop] && prop !== "success") {
       let err = document.createElement('p');
       err.classList.add("text-rose-600")
       err.innerHTML = errorMessages[prop];
+      errorDiv.appendChild(err);
+    }
+    
+    if(prop == "data") {
+      let err = document.createElement('p');
+      err.classList.add("text-rose-600")
+      err.innerHTML = obj[prop] + " | Be sure to load images for all layers in your collection";
       errorDiv.appendChild(err);
     }
   }
@@ -62,17 +69,16 @@ export default {
 
     async function generatePreview() {
       let readyForPreview = store.isReadyForPreview
-      if (readyForPreview.ready) {
+      if (readyForPreview.success) {
         let _state = JSON.stringify(store.getState)
-        const previewImg = await window.electronAPI.generatePreview(_state);
-
-        if(previewImg) {
-          window.open(previewImg, '_blank', 'right=100, top=100, frame=true,nodeIntegration=no')
+        const result = await window.electronAPI.generatePreview(_state);
+        if(result.success) {
+          window.open(result.data, '_blank', 'right=100, top=100, frame=true,nodeIntegration=no')
         } else {
-          createErrorMessages({ preview : false }) 
+          createErrorPanel(result)
         }
       } else {
-        createErrorMessages(readyForPreview) 
+        createErrorPanel(readyForPreview) 
       }
     }
 
@@ -84,13 +90,16 @@ export default {
 
     async function generateCollection() {
       let isReady = store.isReadyForCollection;
-      if (isReady.ready) {
+      if (isReady.success) {
         let _state = JSON.stringify(store.getState)
-        const collection = await window.electronAPI.generateCollection(_state)
-        console.log(collection)
-        store.setCollectionGenerated(true);
+        const result = await window.electronAPI.generateCollection(_state)
+        if (result.success) {
+          store.setCollectionGenerated(true);
+        } else {
+          createErrorPanel(result) 
+        }
       } else {
-        createErrorMessages(isReady) 
+        createErrorPanel(isReady) 
       }
     }
 
