@@ -50,7 +50,7 @@ async function selectFolder() {
   }
 }
 
-async function selectTraits() {
+async function loadTraits() {
   const { canceled, filePaths } = await dialog.showOpenDialog({
     properties: ['multiSelections'],
     filters: [{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }]
@@ -201,7 +201,7 @@ ipcMain.handle("loadStateFromFile", loadStateFromFile)
 
 ipcMain.handle('dialog:selectFolder', selectFolder)
 
-ipcMain.handle('dialog:selectTraits', selectTraits)
+ipcMain.handle('dialog:loadTraits', loadTraits)
 
 ipcMain.handle('getRecentProjects', getRecentProjects)
 

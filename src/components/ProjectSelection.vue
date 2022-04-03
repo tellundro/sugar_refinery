@@ -71,7 +71,6 @@ export default {
     window.electronAPI.getRecentProjects().then(function(result) {
       lastProjects.value = result;
     })
-    // console.log(lastProjects)
 
     return {
       store,
@@ -81,8 +80,5 @@ export default {
       deleteProject,
     }
   },
-  // props: {
-  //   msg: String
-  // }
 }
 </script>

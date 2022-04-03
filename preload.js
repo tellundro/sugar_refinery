@@ -16,7 +16,7 @@ contextBridge.exposeInMainWorld(
   saveAndClose: (state) => ipcRenderer.send('save-to-txt-and-close', state),
   saveAndReturn: (state) => ipcRenderer.send('save-to-txt-and-return', state),
   selectFolder: () => ipcRenderer.invoke('dialog:selectFolder'),
-  selectTraits: () => ipcRenderer.invoke('dialog:selectTraits'),
+  loadTraits: () => ipcRenderer.invoke('dialog:loadTraits'),
   getFileNameFromPath: (fullPath) => ipcRenderer.invoke('getFileNameFromPath', fullPath),
   getRecentProjects: () => ipcRenderer.invoke('getRecentProjects'),
   loadStateFromFile: (fullPath) => ipcRenderer.invoke('loadStateFromFile', fullPath),

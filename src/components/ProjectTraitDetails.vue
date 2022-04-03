@@ -72,7 +72,7 @@
 
     <div class="w-full bg-zinc-900 p-1 justify-end flex rounded-md"> 
       <!-- add images button -->
-      <button @click="selectTraits" class="group flex hover:bg-zinc-800 items-center gap-2 p-2 h-10 w-40 justify-end rounded transition-colors" id="btnclick">
+      <button @click="loadTraits" class="group flex hover:bg-zinc-800 items-center gap-2 p-2 h-10 w-40 justify-end rounded transition-colors" id="btnclick">
         <p class="text-lg group-hover:text-zinc-400 text-zinc-600 transition-colors">
           Add images
         </p>
@@ -143,8 +143,8 @@ export default {
     const hasPrevLayer = (layerIndex > 0);
     const hasNextLayer = (layerIndex < (store.getLayersCount - 1));
 
-    async function selectTraits() {
-      const traitPaths = await window.electronAPI.selectTraits();
+    async function loadTraits() {
+      const traitPaths = await window.electronAPI.loadTraits();
 
       for (let i = 0 ; i < traitPaths.length ; i++ ){
         let fileName = await window.electronAPI.getFileNameFromPath(traitPaths[i]);
@@ -155,7 +155,7 @@ export default {
     return {
       store,
       layerId,
-      selectTraits,
+      loadTraits,
       layerIndex,
       hasPrevLayer,
       hasNextLayer,
