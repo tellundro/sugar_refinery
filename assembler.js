@@ -29,12 +29,12 @@ class Assembler {
   // extra metadata for Solana
   solanaExtraMetadata = {
     symbol: "", // collection symbol
-    seller_fee_basis_points: 1000, // secondary market royalties 1000 = 10%
+    seller_fee_basis_points: "", // secondary market royalties 1000 = 10%
     external_url: "", // collection external url/website
     creators: [
       {
         address: "", // solana wallet public address
-        share: 100, // 100 = 100%
+        share: "", // 100 = 100%
       },
     ],
   }
@@ -230,6 +230,8 @@ class Assembler {
 
         collectionMetadata.push({ imageName: imgName, metadata: imageObj.imgMetadata })
         nftsCount++;
+
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
       }
     }
 
