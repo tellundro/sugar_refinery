@@ -8,16 +8,6 @@
       </p>
     </div>
 
-    <div v-if="store.metadata.collectionGenerated" class="p-2 relative flex justify-start rounded-none border-b gap-4 mb-6 ">
-      <p class="w-52 p-2 align-middle text-left border-b-zinc-400">IPFS Uri: <span class="text-rose-600">*</span></p>
-      <input 
-        v-model="store.metadata.ipfsURI" placeholder="IPFS folder CID..."
-        class="p-2 w-96 focus:outline-none transition-colors focus:bg-zinc-400 focus:text-zinc-800 hover:placeholder:text-zinc-700 placeholder:text-zinc-700 focus:placeholder:text-zinc-700 hover:text-zinc-800 hover:bg-zinc-400 border border-zinc-400 rounded bg-inherit text-inherit" />
-      <div class="absolute flex items-center bottom-0 right-0 translate-x-full h-full pl-6">
-        <button @click="updateMetadata" class="text-sm border p-2 text-zinc-400 hover:bg-zinc-400 hover:text-zinc-800 transition-colors cursor-pointer">Update metadata</button>
-      </div>
-    </div>
-
     <div class="p-2  flex justify-start border-b-zinc-400 gap-4 ">
       <p class="w-52 p-2 align-middle text-left">Collection name: <span class="text-rose-600">*</span></p>
 

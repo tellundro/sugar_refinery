@@ -19,48 +19,18 @@
 
     <div class="w-1/2 gap-4 flex justify-end align-middle">
       <div @click="generatePreview" class="cursor-pointer transition-colors hover:bg-zinc-800 p-1 rounded">Preview NFT</div>
-      <div @click="generateCollection" class="cursor-pointer transition-colors hover:bg-zinc-800 p-1 rounded">Generate Collection</div>
+      <!-- <div @click="generateCollection" class="cursor-pointer transition-colors hover:bg-zinc-800 p-1 rounded">Generate Collection</div> -->
+      <router-link to="/project-home/collection-generation" class="cursor-pointer transition-colors hover:bg-zinc-800 p-1 rounded">
+        Generate Collection
+      </router-link>
     </div>
-  </div>
-
-  <div @click="closeError" id="errorMessage" class="z-30 pl-20 overflow-y-auto cursor-pointer hover:border-rose-600 hover:border bottom-0 right-0 rounded-none w-full p-2 pr-6 invisible absolute bg-zinc-900 text-sm">
   </div>
 
 </template>
 
 <script>
 import { projStore } from "@/store/projectStore"
-import { errorMessages } from "./validationErrors.js"
-
-function createErrorPanel(obj) {
-  const errorDiv = document.getElementById("errorMessage")
-  errorDiv.replaceChildren()
-
-  // error header
-  let header = document.createElement('p');
-  header.innerHTML = "Could not generate files:"
-  header.classList.add("text-rose-600")
-  header.classList.add("text-sm")
-  errorDiv.appendChild(header)
-
-  // error messages
-  for(const prop in obj) {
-    if(!obj[prop] && prop !== "success") {
-      let err = document.createElement('p');
-      err.classList.add("text-rose-600")
-      err.innerHTML = errorMessages[prop];
-      errorDiv.appendChild(err);
-    }
-    
-    if(prop == "data") {
-      let err = document.createElement('p');
-      err.classList.add("text-rose-600")
-      err.innerHTML = obj[prop] + " | Be sure to load images for all layers in your collection";
-      errorDiv.appendChild(err);
-    }
-  }
-  errorDiv.classList.remove("invisible");
-}
+import createErrorPanel from "./errorPanel.js"
 
 export default {
   name: 'ProjectNavbar',
@@ -82,31 +52,8 @@ export default {
       }
     }
 
-    function closeError() {
-      let errorDiv = document.getElementById("errorMessage")
-      errorDiv.classList.add("invisible")
-      errorDiv.replaceChildren()
-    }
-
-    async function generateCollection() {
-      let isReady = store.isReadyForCollection;
-      if (isReady.success) {
-        let _state = JSON.stringify(store.getState)
-        const result = await window.electronAPI.generateCollection(_state)
-        if (result.success) {
-          store.setCollectionGenerated(true);
-        } else {
-          createErrorPanel(result) 
-        }
-      } else {
-        createErrorPanel(isReady) 
-      }
-    }
-
     return {
       generatePreview,
-      generateCollection,
-      closeError
     }
   },
 }
