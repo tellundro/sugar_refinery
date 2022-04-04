@@ -65,7 +65,8 @@ let originalState = {
     height: "",
     externalURL: "",
     blockchain: "",
-    ipfsURI: "",
+    IPFSUri: "",
+    hasIPFSinfo: false,
     collectionGenerated: false,
     // Solana metadata
     symbol: "", // collection symbol
@@ -155,6 +156,9 @@ export const projStore = defineStore('projStore', {
 
   },
   actions: {
+    setHasIPFSinfo(bool) {
+      this.metadata.hasIPFSinfo = bool;
+    },
     setCollectionGenerated(bool) {
       this.metadata.collectionGenerated = bool;
     },

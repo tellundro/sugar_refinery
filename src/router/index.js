@@ -37,7 +37,11 @@ const routes = [
         name: 'category-trait-details',
         component: () => import('../components/ProjectTraitDetails.vue')
       },
-
+      {
+        path: 'collection-generation',
+        name: 'collection-generation',
+        component: () => import('../components/CollectionGeneration.vue')
+      },
     ],
   },
 ]

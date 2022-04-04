@@ -1,7 +1,5 @@
 # TODO
 
-- create collection generation page (for creating/updating metadata for collections)
-- add field for updating IPFS address (collection folder CID)
 - add logic to generate json metadata for each image 
 - PRELOAD ALL IMAGE TRAITS TO AVOID HAVING TO LOAD EACH ONE EVERY TIME
 - pack and distribute first release
@@ -14,6 +12,7 @@
 # DONE
 
 - ... untracked additions
+- added field for updating IPFS address (collection folder CID) (project metadata page)
 - added preview logic
 - added Project deletion button (in Project Selection)
 - added Blockchain select option 
@@ -22,4 +21,5 @@
 - added state validation before generating collection (both ethereum and solana)
 - added dynamic canvas size (from project metadata dimensions fields)
 - added collection creation logic (basic state validation for mandatory fields)
+- created collection generation page (for creating/updating metadata for collections)
 
